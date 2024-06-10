@@ -1,0 +1,36 @@
+---
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "17 00 * * *"  # 00:17UTC, ~17:17 PST
+  push:
+    branches:
+      - master
+  
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    name: Fetch latest go version
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Fetch
+        id: fetch
+        run: |
+          curl  'https://go.dev/dl/?mode=json' > ${RUNNER_TEMP}/goversion.json
+          echo "goversion=${RUNNER_TEMP}/goversion.json" >> "$GITHUB_OUTPUT"
+      - name: Split New Versions
+        id: split
+        run: |
+	  jq '.[].version' ${{ steps.fetch.outputs.goversion }} | xargs -L1 -I{} sh -c 'jq ".[] | select(.version == \"{}\")|." ${{ steps.fetch.outputs.goversion }} > versions/{}.json'
+          git add -A versions/go*
+      - name: Re-Merge
+        id: remerge
+        run: |
+          jq -n '[inputs|add]' versions/go*.json | jq -S . > all-versions.json
+          git add all-versions.json
+      - name: commit
+        id: commit
+        run: |
+          git diff --staged --name-only  versions/go*|sed -e 's@versions/go@ - add version @g' -e 's/.json$//g' | git commit -F -
