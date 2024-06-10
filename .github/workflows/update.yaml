@@ -1,0 +1,38 @@
+---
+name: Fetch and Merge go versions
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "17 00 * * *"  # 00:17UTC, ~17:17 PST
+
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    name: Fetch and merge go versions
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Fetch
+        id: fetch
+        run: |
+          curl  'https://go.dev/dl/?mode=json' > ${RUNNER_TEMP}/goversion.json
+          echo "goversion=${RUNNER_TEMP}/goversion.json" >> "$GITHUB_OUTPUT"
+      - name: Split New Versions
+        id: split
+        run: |
+          mkdir -p versions
+          jq '.[].version' ${{ steps.fetch.outputs.goversion }} | xargs -L1 -I{} sh -c 'jq ".[] | select(.version == \"{}\")|." ${{ steps.fetch.outputs.goversion }} > versions/{}.json'
+          git add -A versions/go*
+      - name: Re-Merge
+        id: remerge
+        run: |
+          jq -n '[inputs|add]' versions/go*.json | jq -S . > all-versions.json
+          git add all-versions.json
+      - name: commit
+        id: commit
+        run: |
+          git config --global user.name "Allan Clark"
+          git config --global user.email "chickenandpork@users.noreply.github.com"
+          ( echo $(git diff --staged --name-only  versions/go*|sed -e 's@versions/go@@g' -e 's/.json$//g') | sed -e 's/^/feat: version update: /g' && echo "" && 
+          git diff --staged --name-only  versions/go*|sed -e 's@versions/go@ - add version @g' -e 's/.json$//g' ) | git commit -aF - && git push || true
