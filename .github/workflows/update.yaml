@@ -31,6 +31,8 @@ jobs:
           git add all-versions.json
       - name: commit
         id: commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GO_RELEASE_ACCUMULATOR }}
         run: |
           git config --global user.name "Allan Clark"
           git config --global user.email "chickenandpork@users.noreply.github.com"
