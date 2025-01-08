@@ -27,7 +27,7 @@ jobs:
       - name: Re-Merge
         id: remerge
         run: |
-          jq -n '[inputs|add]' versions/go*.json | jq -S . > all-versions.json
+          jq -n '[inputs]' versions/go*.json | jq -S . > all-versions.json
           git add all-versions.json
       - name: commit
         id: commit
