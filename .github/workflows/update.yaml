@@ -12,7 +12,7 @@ jobs:
     name: Fetch and merge go versions
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Fetch
         id: fetch
         run: |
