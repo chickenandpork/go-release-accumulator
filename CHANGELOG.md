@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.0](https://github.com/chickenandpork/go-release-accumulator/compare/v1.0.0...v1.1.0) (2025-08-17)
+
+
+### Features
+
+* version update: 1.23.10 1.24.4 ([d0659e8](https://github.com/chickenandpork/go-release-accumulator/commit/d0659e8f6d74aec098a5a17536dba0f022f52d2a))
+* version update: 1.23.11 1.24.5 ([aeb0ef1](https://github.com/chickenandpork/go-release-accumulator/commit/aeb0ef161353bd554db54558daa43cbe7c4144da))
+* version update: 1.23.12 1.24.6 ([1f34f05](https://github.com/chickenandpork/go-release-accumulator/commit/1f34f05af472ffc9d6fd90565206c0998efc8c60))
+* version update: 1.25.0 ([7b81866](https://github.com/chickenandpork/go-release-accumulator/commit/7b8186634cd17df600df9cf5eb7d990d64d7bb76))
+
 ## 1.0.0 (2025-05-14)
 
 
